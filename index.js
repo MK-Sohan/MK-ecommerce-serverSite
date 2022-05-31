@@ -24,8 +24,8 @@ function varifyJwt(req, res, next) {
   }
   const token = authHeader.split(" ")[1];
   jwt.verify(token, "shhhhh", function (err, decoded) {
-    console.log(decoded.foo); // bar
     req.decoded = decoded;
+    console.log(decoded);
     next();
   });
 }
@@ -39,6 +39,7 @@ async function run() {
       .db("allproducts")
       .collection("products");
     const userCollection = client.db("allproducts").collection("users");
+    const cartCollection = client.db("allcartProducts").collection("cart");
 
     const reviewsCollection = client
       .db("Customers-Reviews")
@@ -69,7 +70,7 @@ async function run() {
       const result = await allProductsCollection.find(query).toArray();
       res.send(result);
     });
-    app.get("/products", varifyJwt, async (req, res) => {
+    app.get("/products", async (req, res) => {
       const query = {};
       const result = await allProductsCollection.find(query).toArray();
       res.send(result);
@@ -106,6 +107,17 @@ async function run() {
     app.get("/user", async (req, res) => {
       const query = {};
       const result = await userCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.post("/carts", async (req, res) => {
+      const cart = req.body;
+      const result = await cartCollection.insertOne(cart);
+      res.send(result);
+    });
+    app.get("/cart/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await cartCollection.find(query).toArray();
       res.send(result);
     });
   } finally {
