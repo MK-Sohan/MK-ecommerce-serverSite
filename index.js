@@ -25,7 +25,7 @@ function varifyJwt(req, res, next) {
   const token = authHeader.split(" ")[1];
   jwt.verify(token, "shhhhh", function (err, decoded) {
     req.decoded = decoded;
-    console.log(decoded);
+    // console.log(decoded);
     next();
   });
 }
@@ -44,6 +44,7 @@ async function run() {
     const reviewsCollection = client
       .db("Customers-Reviews")
       .collection("reviews");
+    const profileCollection = client.db("user-profile").collection("profile");
 
     app.get("/mans", async (req, res) => {
       const catagory = req.query.catagory;
@@ -82,10 +83,10 @@ async function run() {
     });
     app.get("/productdetail/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      // console.log(id);
       const query = { _id: ObjectId(id) };
       const result = await allProductsCollection.findOne(query);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     });
 
@@ -117,6 +118,7 @@ async function run() {
     app.get("/carts/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
+      // console.log(query);
       const result = await cartCollection.find(query).toArray();
       res.send(result);
     });
@@ -124,6 +126,27 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    });
+    app.put("/profile/:email", async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const update = req.body;
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: update,
+      };
+      const result = await profileCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+    app.get("/updateprofile/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await profileCollection.findOne(query);
       res.send(result);
     });
   } finally {
