@@ -110,7 +110,7 @@ async function run() {
       const result = await userCollection.find(query).toArray();
       res.send(result);
     });
-    app.post("/cart", async (req, res) => {
+    app.post("/cart", varifyJwt, async (req, res) => {
       const cart = req.body;
       const result = await cartCollection.insertOne(cart);
       res.send(result);
@@ -143,10 +143,15 @@ async function run() {
       );
       res.send(result);
     });
-    app.get("/updateprofile/:email", async (req, res) => {
+    app.get("/updateprofile/:email", varifyJwt, async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const result = await profileCollection.findOne(query);
+      res.send(result);
+    });
+    app.get("/alluser", async (req, res) => {
+      const query = {};
+      const result = await userCollection.find(query).toArray();
       res.send(result);
     });
   } finally {
