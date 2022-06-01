@@ -70,7 +70,7 @@ async function run() {
       const result = await allProductsCollection.find(query).toArray();
       res.send(result);
     });
-    app.get("/products", async (req, res) => {
+    app.get("/products", varifyJwt, async (req, res) => {
       const query = {};
       const result = await allProductsCollection.find(query).toArray();
       res.send(result);
@@ -109,12 +109,12 @@ async function run() {
       const result = await userCollection.find(query).toArray();
       res.send(result);
     });
-    app.post("/carts", async (req, res) => {
+    app.post("/cart", async (req, res) => {
       const cart = req.body;
       const result = await cartCollection.insertOne(cart);
       res.send(result);
     });
-    app.get("/cart/:email", async (req, res) => {
+    app.get("/carts/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const result = await cartCollection.find(query).toArray();
