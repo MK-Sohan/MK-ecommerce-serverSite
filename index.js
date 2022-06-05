@@ -79,9 +79,20 @@ async function run() {
       const result = await allProductsCollection.find(query).toArray();
       res.send(result);
     });
+    app.post("/addproduct", async (req, res) => {
+      const product = req.body;
+      const result = await allProductsCollection.insertOne(product);
+      res.send(result);
+    });
     app.get("/reviews", varifyJwt, async (req, res) => {
       const query = {};
       const result = await reviewsCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.delete("/deleteproduct/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await allProductsCollection.deleteOne(query);
       res.send(result);
     });
     app.get("/productdetail/:id", async (req, res) => {
